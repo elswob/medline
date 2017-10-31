@@ -42,12 +42,23 @@ for r in recs:
                 title = title[0]
         else:
                 title = ""
-        abstract = re.findall('<AbstractText .*?>(.*?)</AbstractText', r)
+                
+        abstract = re.findall('<Abstract>([\s\S]*?)</Abstract>', r)
+
         if abstract:
-                abstract = unicode(abstract[0], "utf-8")
+                abstract = re.sub("\n\s*", "", abstract[0])
+                abstract = re.sub('<AbstractText Label="(.*?)".*?>', "\\1: ", abstract)
+                abtract = re.sub('</AbstractText>', "", abstract)
         else:
                 abstract = ""
-        articles.append({'_index': 'medline', '_type': 'article', "_id": pmid, "_op_type": 'index', '_source': {"title": title, "abstract": abstract, "timestamp": datetime.now().isoformat()}})
+
+        type = re.findall("<PublicationType UI=.*?>(.*?)</PublicationType>", r)
+        if type:
+                type = str(type)
+        else:
+                type = str([])
+                
+        articles.append({'_index': 'medline', '_type': 'article', "_op_type": 'index', '_source': {"pmid": pmid, "title": title, "abstract": abstract, "timestamp": datetime.now().isoformat(), "type": type}})
 
 res = helpers.bulk(es, articles, raise_on_exception=False)
 
