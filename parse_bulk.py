@@ -68,6 +68,6 @@ for r in recs:
                 
         articles.append({'_index': 'medline', '_id':pmid, '_type': '_doc', "_op_type": 'index', '_source': {"year":int(dateCompletedYear),"pmid": pmid, "title": title, "abstract": abstract, "timestamp": datetime.now().isoformat(), "type": type}})
 
-res = helpers.bulk(es, articles, raise_on_exception=False)
+res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=60)
 
 logging.info(datetime.now().isoformat() + " imported " + str(res[0]) + " records from " + sys.argv[1])

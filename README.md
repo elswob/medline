@@ -69,7 +69,7 @@ Now all we need to do is load and index the data into elasticsearch.  Assuming e
 local machine on port 9200, it's as easy as:
 
 ```
-ls *.xml | xargs -n 1 -P ./parse_bulk.py
+ls *.xml | xargs -n 1 -P python parse_bulk.py
 ```
 
 This creates a 'medline' index on elasticsearch, loads the records, and indexes them.  This will take a couple hours.
