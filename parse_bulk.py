@@ -32,14 +32,15 @@ articles = []
 
 dateData=''
 for r in recs:
-        dateCompletedYear = re.findall('<DateCompleted>(?s).*<Year>(.*?)</Year>', r)
+        #dateCompletedYear = re.findall('<DateCompleted>(?s).*<Year>(.*?)</Year>', r)
+        pubDate = re.findall('<PubDate>(?s).*<Year>(.*?)</Year>', r)
         #print(dateCompletedYear)
-        if dateCompletedYear:
-            dateCompletedYear = dateCompletedYear[0]
+        if pubDate:
+            pubDate = int(pubDate[0])
         else:
-            dateCompletedYear = ""
+            pubDate = 0
 
-        pmid = re.findall('<PMID Version="1">(.*?)</PMID>', r)
+        pmid = re.findall('<PMID Version=.*>(.*?)</PMID>', r)
         if pmid:
                 pmid = pmid[0]
         else:
@@ -65,8 +66,9 @@ for r in recs:
                 type = str(type)
         else:
                 type = str([])
-                
-        articles.append({'_index': 'medline', '_id':pmid, '_type': '_doc', "_op_type": 'index', '_source': {"year":int(dateCompletedYear),"pmid": pmid, "title": title, "abstract": abstract, "timestamp": datetime.now().isoformat(), "type": type}})
+        #print(pmid,title,abstract,pubDate,type)        
+        if pmid != '':
+            articles.append({'_index': 'medline', '_id':pmid, '_type': '_doc', "_op_type": 'index', '_source': {"year":pubDate,"pmid": pmid, "title": title, "abstract": abstract, "timestamp": datetime.now().isoformat(), "type": type}})
 
 res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=60)
 

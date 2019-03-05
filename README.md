@@ -109,3 +109,16 @@ ls *.gz | xargs -n 1 -P 8 gunzip
 ls *.xml | xargs -n 1 -P ../parse_bulk.py
 ```
 
+## Queries
+
+By PMID
+
+```
+curl -XGET 'localhost:9200/medline/_search?pretty' -H 'Content-Type: application/json' -d '{"size":1,"query":{"bool":{"filter":[{"term":{"pmid":"123"}}]}}}';
+```
+
+By keyword
+
+```
+curl -XGET 'localhost:9200/medline/_search?pretty' -H 'Content-Type: application/json' -d '{"size":10,"query":{"term":{"abstract":"pcsk9"}}}';
+```
