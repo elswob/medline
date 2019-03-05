@@ -30,7 +30,15 @@ recs.pop(0)
 
 articles = []
 
+dateData=''
 for r in recs:
+        dateCompletedYear = re.findall('<DateCompleted>(?s).*<Year>(.*?)</Year>', r)
+        #print(dateCompletedYear)
+        if dateCompletedYear:
+            dateCompletedYear = dateCompletedYear[0]
+        else:
+            dateCompletedYear = ""
+
         pmid = re.findall('<PMID Version="1">(.*?)</PMID>', r)
         if pmid:
                 pmid = pmid[0]
@@ -58,7 +66,7 @@ for r in recs:
         else:
                 type = str([])
                 
-        articles.append({'_index': 'medline', '_type': 'article', "_op_type": 'index', '_source': {"pmid": pmid, "title": title, "abstract": abstract, "timestamp": datetime.now().isoformat(), "type": type}})
+        articles.append({'_index': 'medline', '_id':pmid, '_type': '_doc', "_op_type": 'index', '_source': {"year":int(dateCompletedYear),"pmid": pmid, "title": title, "abstract": abstract, "timestamp": datetime.now().isoformat(), "type": type}})
 
 res = helpers.bulk(es, articles, raise_on_exception=False)
 
