@@ -59,8 +59,8 @@ gunzip *.gz
 Or if you have multiple cores, which of course you do, you can speed things up with `xargs` (here for 8 cores):
 
 ```
-cat filelist | xargs -n 1 -P 8 wget
-ls *.gz | xargs -n 1 -P 8 gunzip
+cat filelist | xargs -n 1 -P 10 wget
+ls *.gz | xargs -n 1 -P 10 gunzip
 ```
 
 ## Index the data
@@ -69,7 +69,7 @@ Now all we need to do is load and index the data into elasticsearch.  Assuming e
 local machine on port 9200, it's as easy as:
 
 ```
-ls *.xml | xargs -n 1 -P python parse_bulk.py
+ls *.xml | xargs -n 1 -P 10 python parse_bulk.py
 ```
 
 This creates a 'medline' index on elasticsearch, loads the records, and indexes them.  This will take a couple hours.
