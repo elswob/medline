@@ -63,6 +63,12 @@ cat filelist | xargs -n 1 -P 10 wget
 ls *.gz | xargs -n 1 -P 10 gunzip
 ```
 
+## Create the index
+
+Set specific mappings to deal with DOI and things
+
+python create_index.py
+
 ## Index the data
 
 Now all we need to do is load and index the data into elasticsearch.  Assuming elastic search is running on your
