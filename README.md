@@ -75,7 +75,7 @@ Now all we need to do is load and index the data into elasticsearch.  Assuming e
 local machine on port 9200, it's as easy as:
 
 ```
-ls *.xml | xargs -n 1 -P 10 python parse_bulk.py
+ls data/base/*.xml | xargs -n 1 -P 10 python parse_bulk.py
 ```
 
 This creates a 'medline' index on elasticsearch, loads the records, and indexes them.  This will take a couple hours.
@@ -105,14 +105,13 @@ This seems to be a reasonable approach (the standard analyzer is well suited for
 Each day, additional articles are added to Pubmed.  Between annual releases, these new records are released as daily updates.  We will want to add these to have a complete database (and, ideally, repeat this process periodically or just prior to any significant analysis of the medline data).  The work flow is almost exactly as above, just targeting files from a different directory on the NCBI ftp server.  And, since these files are very small, they should download and index very quickly.
 
 ```
-mdkir daily
+mkdir daily
 cd daily
 wget ftp.ncbi.nlm.nih.gov/pubmed/updatefiles
-grep -o -P 'medline.*?.gz' updatefiles | uniq |
-sed -e 's/^/ftp:\/\/ftp.ncbi.nlm.nih.gov\/pubmed\/updatefiles\//' > filelist
+grep -o -P 'pubmed.*?.gz' updatefiles | uniq | sed -e 's/^/ftp:\/\/ftp.ncbi.nlm.nih.gov\/pubmed\/updatefiles\//' > filelist
 cat filelist | xargs -n 1 -P 8 wget
 ls *.gz | xargs -n 1 -P 8 gunzip
-ls *.xml | xargs -n 1 -P ../parse_bulk.py
+ls data/daily/*.xml | xargs -n 1 -P 10 python parse_bulk.py
 ```
 
 ## Queries
