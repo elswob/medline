@@ -127,3 +127,34 @@ By keyword
 ```
 curl -XGET 'localhost:9200/medline/_search?pretty' -H 'Content-Type: application/json' -d '{"size":10,"query":{"term":{"abstract":"pcsk9"}}}';
 ```
+
+## ngrams
+
+Setup nltk
+
+```
+pip install -r requirements.txt
+```
+
+Download things
+
+```
+python -m nltk.downloader punkt stopwords averaged_perceptron_tagger wordnet
+```
+
+Times:
+
+```
+time python3 parse_bulk_ngrams.py /data/medline/daily/pubmed19n1074.xml
+
+
+real	5m27.050s
+user	5m24.217s
+sys	0m10.400s
+```
+
+Run
+
+```
+ls data/daily/*.xml | xargs -n 1 -P 40 python3 parse_bulk_ngrams.py
+```
