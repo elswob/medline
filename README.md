@@ -128,7 +128,7 @@ By keyword
 curl -XGET 'localhost:9200/medline/_search?pretty' -H 'Content-Type: application/json' -d '{"size":10,"query":{"term":{"abstract":"pcsk9"}}}';
 ```
 
-## ngrams
+# ngrams
 
 Setup nltk
 
@@ -157,4 +157,10 @@ Run
 
 ```
 ls data/daily/*.xml | xargs -n 1 -P 40 python3 parse_bulk_ngrams.py
+```
+
+Index:
+
+```
+ls data/ngrams/*.txt.gz | xargs -n 1 -P 20 python index_bulk_ngrams.py
 ```
