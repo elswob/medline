@@ -66,6 +66,6 @@ def make_ngram_index(index_name):
     es.indices.create(index = index_name, body = request_body, request_timeout=60)
 
 
-#make_ngram_index('medline-unigrams')
-#make_ngram_index('medline-bigrams')
+make_ngram_index('medline-unigrams')
+make_ngram_index('medline-bigrams')
 make_ngram_index('medline-trigrams')

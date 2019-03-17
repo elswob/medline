@@ -36,15 +36,15 @@ with gzip.open(fName, 'r') as f:
         if ngram_type == 'unigram':
             pmid,t1,count = line.rstrip().split('\t')
             value=t1
-            articles.append({'_index': 'medline-unigrams', '_id':pmid+':'+value, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
+            articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
         elif ngram_type == 'bigram':
             pmid,t1,t2,count = line.rstrip().split('\t')
             value=t1+' '+t2
-            articles.append({'_index': 'medline-bigrams', '_id':pmid+':'+value, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
+            articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
         elif ngram_type == 'trigram':
             pmid,t1,t2,t3,count = line.rstrip().split('\t')
             value=t1+' '+t2+' '+t3
-            articles.append({'_index': 'medline-trigrams', '_id':pmid+':'+value, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
+            articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
         #print(ngram_type,pmid,value,count)
     
 #print(articles)

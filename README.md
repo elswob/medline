@@ -159,8 +159,12 @@ Run
 ls data/daily/*.xml | xargs -n 1 -P 40 python3 parse_bulk_ngrams.py
 ```
 
-Index:
+Index: (2 days)
 
 ```
-ls data/ngrams/*.txt.gz | xargs -n 1 -P 20 python index_bulk_ngrams.py
+time ls data/ngrams/*.txt.gz | xargs -n 1 -P 20 python index_bulk_ngrams.py > index-ngrams.log 2>index-ngrams.err
+
+real    3076m23.424s
+user    5716m56.571s
+sys     417m25.828s
 ```
