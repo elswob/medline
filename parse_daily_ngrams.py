@@ -7,7 +7,7 @@ from datetime import datetime
 import json
 from nltk_functions import get_unigrams,get_bigrams,get_trigrams
 import logging
-logging.basicConfig(filename='parse.log',level=logging.INFO)
+logging.basicConfig(filename='ngram-parse.log',level=logging.INFO)
 
 
 print('Reading ',sys.argv[1])
@@ -23,11 +23,7 @@ recs.pop(0)
 articles = []
 
 dateData=''
-outDir='data/ngrams/'
-#otuDir=''
-u=open(outDir+fName+'.unigrams.txt','w')
-b=open(outDir+fName+'.bigrams.txt','w')
-t=open(outDir+fName+'.trigrams.txt','w')
+articles=[]
 for r in recs:
         #Year
         #dateCompletedYear = re.findall('<DateCompleted>(?s).*<Year>(.*?)</Year>', r)
@@ -78,18 +74,20 @@ for r in recs:
         if pmid != '':
             unigrams=get_unigrams(title+' '+abstract)
             for n in unigrams:
-                u.write(pmid+'\t'+n['t1']+'\t'+str(n['count'])+'\n')
+                value=n['t1']
+                articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
             #print(unigrams)
             bigrams=get_bigrams(title+' '+abstract)
             for n in bigrams:
-                b.write(pmid+'\t'+n['t1']+'\t'+n['t2']+'\t'+str(n['count'])+'\n')
+                value=n['t1']+' '+n['t2']
+                articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
             #print(bigrams)
             trigrams=get_trigrams(title+' '+abstract)
             for n in trigrams:
-                t.write(pmid+'\t'+n['t1']+'\t'+n['t2']+'\t'+n['t3']+'\t'+str(n['count'])+'\n')
+                 value=n['t1']+' '+n['t2']+' '+n['t3']
+                articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
             #print(trigrams)
-            #articles.append({'_index': 'medline', '_id':pmid, '_type': '_doc', "_op_type": 'index', '_source': {"doi":doi,"year":pubDate,"pmid": pmid, "title": title, "abstract": abstract, "timestamp": datetime.now().isoformat(), "type": type}})
 
-#res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=60)
+res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=60)
 
-#logging.info(datetime.now().isoformat() + " imported " + str(res[0]) + " records from " + sys.argv[1])
+logging.info(datetime.now().isoformat() + " imported " + str(res[0]) + " records from " + sys.argv[1])
