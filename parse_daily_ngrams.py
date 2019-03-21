@@ -6,9 +6,22 @@ import os
 from datetime import datetime
 import json
 from nltk_functions import get_unigrams,get_bigrams,get_trigrams
+from elasticsearch import Elasticsearch, RequestsHttpConnection, serializer, compat, exceptions, helpers
 import logging
 logging.basicConfig(filename='ngram-parse.log',level=logging.INFO)
 
+# rollback recent changes to serializer that choke on unicode$
+class JSONSerializerPython2(serializer.JSONSerializer):
+        def dumps(self, data):
+                # don't serialize strings
+                if isinstance(data, compat.string_types):
+                        return data
+                try:
+                        return json.dumps(data, default=self.default, ensure_ascii=True)
+                except (ValueError, TypeError) as e:
+                        raise exceptions.SerializationError(data, e)
+
+es = Elasticsearch(serializer=JSONSerializerPython2())  # use default of localhost, port 9200
 
 print('Reading ',sys.argv[1])
 fName=os.path.basename(sys.argv[1])
@@ -75,17 +88,17 @@ for r in recs:
             unigrams=get_unigrams(title+' '+abstract)
             for n in unigrams:
                 value=n['t1']
-                articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
+                articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
             #print(unigrams)
             bigrams=get_bigrams(title+' '+abstract)
             for n in bigrams:
                 value=n['t1']+' '+n['t2']
-                articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
+                articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "bigram", "value": value, "count": int(n['count'])}})
             #print(bigrams)
             trigrams=get_trigrams(title+' '+abstract)
             for n in trigrams:
-                 value=n['t1']+' '+n['t2']+' '+n['t3']
-                articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
+                value=n['t1']+' '+n['t2']+' '+n['t3']
+                articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "trigram", "value": value, "count": int(n['count'])}})
             #print(trigrams)
 
 res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=60)

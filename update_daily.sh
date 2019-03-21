@@ -6,6 +6,7 @@ threads=4
 cd /home/be15516/projects/medline
 . ./venv3/bin/activate
 
+echo `date`
 #download daily data
 wget -O dailyUpdates.txt ftp.ncbi.nlm.nih.gov/pubmed/updatefiles
 #parse file names
@@ -16,16 +17,19 @@ comm -3 <(cat dailyFiles.txt | sort) <(ls  data/daily/ | sort) | sed -e 's/^/ftp
 if [ -s newFiles.txt ]
 then
     echo 'Getting new data'
-    #cat newFiles.txt | xargs -n 1 -P $threads wget -N -P dailyTmp
+    cat newFiles.txt | xargs -n 1 -P $threads wget -N -P dailyTmp
     #uncompress
-    #ls dailyTmp/*.gz | xargs -n 1 -P $threads gunzip
+    ls dailyTmp/*.gz | xargs -n 1 -P $threads gunzip
     #index the medline data
     echo 'Indexing medline data'
-    #ls dailyTmp/*.xml | xargs -n 1 -P $threads python3 parse_bulk.py
+    ls dailyTmp/*.xml | xargs -n 1 -P $threads python3 parse_bulk.py
     #create ngrams
     echo 'Creating and indexing ngrams'
     #index ngrams
     ls dailyTmp/*.xml | xargs -n 1 -P $threads python3 parse_daily_ngrams.py
+    #clean up
+    ls dailyTmp/*.xml | xargs -n 1 -P $threads gzip
+    mv dailyTmp/* data/daily/
 else
     echo 'No new data'
 fi
