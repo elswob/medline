@@ -1,4 +1,5 @@
-#cd ./dailyUpdates
+#cronttab
+#0 0 * * * /bin/bash /path/to/update_daily.sh >> /home/be15516/projects/medline/update_log.txt-
 
 threads=4
 
