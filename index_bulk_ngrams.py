@@ -31,20 +31,32 @@ if 'bigram' in fName:
 elif 'trigram' in fName:
     ngram_type='trigram'
 
+def utf8len(s):
+    return len(s)
+
 with gzip.open(fName, 'r') as f:
     for line in f:   
         if ngram_type == 'unigram':
             pmid,t1,count = line.rstrip().split('\t')
             value=t1
+            index_name = 'medline-unigrams'
             articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
         elif ngram_type == 'bigram':
             pmid,t1,t2,count = line.rstrip().split('\t')
             value=t1+' '+t2
+            index_name = 'medline-bigrams'
             articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
         elif ngram_type == 'trigram':
             pmid,t1,t2,t3,count = line.rstrip().split('\t')
             value=t1+' '+t2+' '+t3
+            index_name = 'medline-trigrams'
             articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
+        record_id = pmid+':'+value
+        if '/abstracttext' not in value:
+            if utf8len(record_id)>512:
+                articles.append({'_index': index_name, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
+            else:
+                articles.append({'_index': index_name, '_id':record_id, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": ngram_type, "value": value, "count": int(count)}})
         #print(ngram_type,pmid,value,count)
     
 #print(articles)

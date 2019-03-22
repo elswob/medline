@@ -88,17 +88,20 @@ for r in recs:
             unigrams=get_unigrams(title+' '+abstract)
             for n in unigrams:
                 value=n['t1']
-                articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                if '/abstracttext' not in value:
+                    articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
             #print(unigrams)
             bigrams=get_bigrams(title+' '+abstract)
             for n in bigrams:
                 value=n['t1']+' '+n['t2']
-                articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "bigram", "value": value, "count": int(n['count'])}})
+                if '/abstracttext' not in value:
+                    articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "bigram", "value": value, "count": int(n['count'])}})
             #print(bigrams)
             trigrams=get_trigrams(title+' '+abstract)
             for n in trigrams:
                 value=n['t1']+' '+n['t2']+' '+n['t3']
-                articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "trigram", "value": value, "count": int(n['count'])}})
+                if '/abstracttext' not in value:
+                    articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "trigram", "value": value, "count": int(n['count'])}})
             #print(trigrams)
 
 res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=60)
