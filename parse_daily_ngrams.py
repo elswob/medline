@@ -88,23 +88,35 @@ for r in recs:
             unigrams=get_unigrams(title+' '+abstract)
             for n in unigrams:
                 value=n['t1']
+                record_id = pmid+':'+value
                 if '/abstracttext' not in value:
-                    articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                    if len(record_id)>500:
+                        articles.append({'_index': 'medline-unigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                    else:
+                        articles.append({'_index': 'medline-unigrams', '_id':record_id, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
             #print(unigrams)
             bigrams=get_bigrams(title+' '+abstract)
             for n in bigrams:
                 value=n['t1']+' '+n['t2']
+                record_id = pmid+':'+value
                 if '/abstracttext' not in value:
-                    articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "bigram", "value": value, "count": int(n['count'])}})
+                    if len(record_id)>500:
+                        articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                    else:
+                        articles.append({'_index': 'medline-bigrams', '_id':record_id, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
             #print(bigrams)
             trigrams=get_trigrams(title+' '+abstract)
             for n in trigrams:
                 value=n['t1']+' '+n['t2']+' '+n['t3']
+                record_id = pmid+':'+value
                 if '/abstracttext' not in value:
-                    articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "trigram", "value": value, "count": int(n['count'])}})
+                    if len(record_id)>500:
+                        articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                    else:
+                        articles.append({'_index': 'medline-trigrams', '_id':record_id, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
             #print(trigrams)
 
-res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=60)
+res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=300)
 
 logging.info(datetime.now().isoformat() + " imported " + str(res[0]) + " records from " + sys.argv[1])
 print(datetime.now().isoformat() + " imported " + str(res[0]) + " records from " + sys.argv[1])
