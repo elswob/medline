@@ -118,5 +118,5 @@ for r in recs:
 
 res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=300)
 
-logging.info(datetime.now().isoformat() + " imported " + str(res[0]) + " records from " + sys.argv[1])
-print(datetime.now().isoformat() + " imported " + str(res[0]) + " records from " + sys.argv[1])
+logging.info(datetime.now().isoformat() + " added " + str(res[0]) + " ngrams from " + sys.argv[1])
+print(datetime.now().isoformat() + " added " + str(res[0]) + " ngrams from " + sys.argv[1])
