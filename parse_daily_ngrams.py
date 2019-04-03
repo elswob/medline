@@ -101,9 +101,9 @@ for r in recs:
                 record_id = pmid+':'+value
                 if '/abstracttext' not in value:
                     if len(record_id)>500:
-                        articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                        articles.append({'_index': 'medline-bigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "bigram", "value": value, "count": int(n['count'])}})
                     else:
-                        articles.append({'_index': 'medline-bigrams', '_id':record_id, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                        articles.append({'_index': 'medline-bigrams', '_id':record_id, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "bigram", "value": value, "count": int(n['count'])}})
             #print(bigrams)
             trigrams=get_trigrams(title+' '+abstract)
             for n in trigrams:
@@ -111,9 +111,9 @@ for r in recs:
                 record_id = pmid+':'+value
                 if '/abstracttext' not in value:
                     if len(record_id)>500:
-                        articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                        articles.append({'_index': 'medline-trigrams', '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "trigram", "value": value, "count": int(n['count'])}})
                     else:
-                        articles.append({'_index': 'medline-trigrams', '_id':record_id, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "unigram", "value": value, "count": int(n['count'])}})
+                        articles.append({'_index': 'medline-trigrams', '_id':record_id, '_type': '_doc', "_op_type": 'index', '_source': {"pmid": pmid, "type": "trigram", "value": value, "count": int(n['count'])}})
             #print(trigrams)
 
 res = helpers.bulk(es, articles, raise_on_exception=False, request_timeout=300)
