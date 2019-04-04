@@ -41,6 +41,11 @@ curl -X POST "localhost:9200/medline-bigrams/_update_by_query" -H 'Content-Type:
     "source": "ctx._source.type= params.type",
     "lang": "painless",
     "params": {"type":"bigram"}
+  },
+  "query": {
+    "term": {
+      "type": "unigram"
+    }
   }
 }
 '
